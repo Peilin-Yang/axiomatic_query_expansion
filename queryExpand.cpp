@@ -858,7 +858,7 @@ L - top similar terms
 K - number of expansion terms
 beta - scaling parameter
 */
-void QueryExpand::expand( int M, int R, int L, int K, float beta )
+void QueryExpand::expand( int M=20, int R=29, int L=1000, int K=20, float beta=1.7 )
 {                           
     string index = get_index_path(); //index file with on index path on each line
     string queryFile = get_origin_qf(); //original query file
