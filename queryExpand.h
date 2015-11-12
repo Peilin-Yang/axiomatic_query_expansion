@@ -15,17 +15,16 @@ class QueryExpand
 {
 
 private:
-	char* origin_query_file_path; // original query file
-	char* expaned_query_file_path; // output for expanded query 
-	char* index_path; // a file that contains the (distributed) index that 
+    const char* origin_query_file_path; // original query file
+    const char* expaned_query_file_path; // output for expanded query 
+    const char* index_path; // a file that contains the (distributed) index that 
 	                  // the original query search against. One line per index.
 	                  // NOTE: THIS IS NOT THE INDEX PATH !!! IT CONTAINS THE
 	                  // INDEX PATH !!!
-    char* result_file_path; // result file of first search in TREC format.
+    const char* result_file_path; // result file of first search in TREC format.
 
 public:
-	QueryExpand(char* origin_qf, char* expanded_qf, char* index_qf, char* 
-	result_fn):
+	QueryExpand(const char* origin_qf, const char* expanded_qf, const char* index_qf, const char* result_fn):
         origin_query_file_path(origin_qf),expaned_query_file_path(expanded_qf),index_path(index_qf), 
         result_file_path(result_fn)
     {

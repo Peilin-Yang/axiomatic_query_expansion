@@ -224,7 +224,7 @@ bool QueryExpand::readQuery(map<int, map<string, int> > &mQuery,
 
             int qid = atoi(queryNumber.c_str());
             qIDs.insert(qid);
-			mQuery.insert(map<int, map<string, int> >::value_type(qid, mTerm));
+	    mQuery.insert(map<int, map<string, int> >::value_type(qid, mTerm));
             //cout << queryNumber << queryText << endl;
         }
     } catch( lemur::api::Exception& e ) {
