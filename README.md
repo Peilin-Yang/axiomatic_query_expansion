@@ -7,3 +7,7 @@ Hui Fang and ChengXiang Zhai. 2006. Semantic term matching in axiomatic approach
 **Usage:**
 
 use ```make``` to compile the binary.
+
+You need the ```indri``` library to compile the binary.
+
+Please refer to the sample files folder for the sample inputs of the binary.
