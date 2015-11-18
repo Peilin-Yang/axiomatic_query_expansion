@@ -42,10 +42,11 @@ vector<string> QueryExpand::split( string s, const string delimiter)
 
 string QueryExpand::stem( const string &srcStr )
 {
-    string term;
-    #if 0
+    string term=srcStr;
+    #if 1
     // porter stemmer
     // Use porter stemmer if the index building uses porter stemmer
+    //cout<<" porter stem in use"<<endl;
     indri::parse::Porter_Stemmer * stemmer = new indri::parse::Porter_Stemmer();		
     char *tmpTerm = (char *)malloc(term.size()+1);
     strcpy(tmpTerm, term.c_str());
@@ -56,6 +57,7 @@ string QueryExpand::stem( const string &srcStr )
     #else
     // krovetz stemmer
     // Use krovert stemmer if the index building uses krovetz stemmer
+    //cout<<" k stem in use"<<endl;
     indri::parse::KrovetzStemmer * stemmer = new indri::parse::KrovetzStemmer();
     char * cstr = new char [srcStr.length()+1];
     std::strcpy (cstr, srcStr.c_str());
@@ -192,7 +194,7 @@ bool QueryExpand::readQuery(map<int, map<string, int> > &mQuery,
             std::string queryNumber;
             std::string queryText;
             if (queries[i].exists("text")){
-                queryText = (std::string) queries[i]["text"];
+                queryText = (std::string) queries[i]["text"] ;
             } else {
                 cout << "TREC query MUST have text!!" << endl;
                 return false;
@@ -214,11 +216,13 @@ bool QueryExpand::readQuery(map<int, map<string, int> > &mQuery,
             //cout << splitted_query.size() << endl;
             for (int i = 0; i != splitted_query.size(); ++i){
                 //cout << splitted_query[i] << endl;
-                if( (mTermIter = mTerm.find(splitted_query[i])) != mTerm.end() )
+                string stemmed_term=stem(splitted_query[i]);
+                //cout <<stemmed_term<<endl;
+                if( (mTermIter = mTerm.find(stemmed_term)) != mTerm.end() )
                 {
     				mTermIter->second += 1;
                 } else{
-    				mTerm.insert(map<string, int>::value_type(splitted_query[i], 1));
+    				mTerm.insert(map<string, int>::value_type(stemmed_term, 1));
                 }
             }
 
@@ -386,7 +390,7 @@ bool QueryExpand::readResultsFile(int M, set<int> &QIDs, vector<string> &vIndex,
 
 	//test output
 	#if VERBOSE
-	printQueryDoc(mQueryDoc, false);
+	printQueryDoc(mQueryDoc, true);
 	#endif
 
 	return true;
@@ -633,7 +637,6 @@ void QueryExpand::calcuTermScore( map<string, int> &mQueryTerm,
 	{
 		string queryTerm = mQueryIter->first;
 		int qtf = mQueryIter->second; // query term frequency
-		
 		map<string, set<string> >::iterator mSetTermIter, mQueryTermIter;
 		if( (mQueryTermIter = mSetTerm.find(queryTerm) ) != mSetTerm.end() )		
 		{
@@ -675,6 +678,10 @@ void QueryExpand::calcuTermScore( map<string, int> &mQueryTerm,
 			
 			mmScore.insert( map< string, map<string, float> >::value_type( queryTerm, mSetTermScore ) );
 		}
+       else{
+            ;
+            //cout<<" cannot find term "<<queryTerm<<endl;
+        }
 		
 	}
 	
@@ -800,13 +807,11 @@ void QueryExpand::extractTerms(map< int, map<int, set<int> > > &mQueryDoc,
 		#if VERBOSE
 		cout << "query:" << mQueryIter->first << " size:" << sTerm.size() << endl;
 		#endif
-
 		map<int, map<string, int> >::iterator mmQueryIter;
 		if( (mmQueryIter = mmQuery.find(mQueryIter->first)) != mmQuery.end() )
 		{
 			map< string, map<string, float> > mTermScore;
 			calcuTermScore( mmQueryIter->second, sTerm, L, beta, mTermScore );
-
 			map<string, float> mAddTerm;
 			calcuQueryScore( mmQueryIter->second, mTermScore, K, mAddTerm );
 			mmTermScore.insert( map< int, map<string, float> >::value_type( mQueryIter->first, mAddTerm ) );
@@ -927,6 +932,18 @@ void QueryExpand::expand( int M=20, int R=29, int L=1000, int K=20, float beta=1
 		cout << "Error when read results file:" << resultFile << endl;
 		exit(1);	
 	}
+
+    //debug purpose: print queries:
+    //map<int, map<string, int> >::iterator it1;
+    //map<string, int>::iterator it2;
+    //for(it1=mmQuery.begin(); it1!=mmQuery.end(); ++it1){
+    //    cout<<"query: "<<it1->first<<endl;
+    //    for(it2=it1->second.begin();it2!=it1->second.end(); ++it2){
+    //        cout<<"\t "<<it2->first<<" : "<<it2->second<<endl;       
+    //    }
+    //
+    //}
+    //cout<< "\n\n\n\n"<<endl;
 
 	// Randomly select R*M documents from indexes and append to mQueryDoc.
 	randomSelDoc( vIndex, R*M, mQueryDoc );
