@@ -77,6 +77,10 @@ protected:
 	//read the query term and tf with stemming
 	bool readQuery(map<int, map<string, int> > &mmQuery, 
 		indri::api::Parameters& params, set<int> &qIDs);
+    
+    // stem query terms
+    bool stemQuery(map<int, map<string, int> > &mQuery,
+    map<int, map<string, int> > &sQuery, const string &index_path);
 
 	//select top M results of each query
 	bool readResultsFile(int M, set<int> &QIDs, vector<string> &vIndex, 

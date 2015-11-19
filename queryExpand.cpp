@@ -167,6 +167,38 @@ bool QueryExpand::readIndexPaths(vector<string> &vIndex)
 }
 
 
+bool QueryExpand::stemQuery(map<int, map<string, int> > &mQuery,
+    map<int, map<string, int> > &sQuery, const string &index_path)
+{
+    try{
+        indri::collection::Repository r;
+        r.openRead(index_path.c_str());
+        map<int, map<string, int> >::iterator it1;    
+        map<string, int>::iterator it2;
+        for(it1=mQuery.begin();it1!=mQuery.end();++it1){
+            map<string, int> temp;
+            for(it2=it1->second.begin(); it2!=it1->second.end(); ++it2){
+                temp[ r.processTerm( it2->first  ) ] = it2->second;
+            }
+            sQuery[it1->first] = temp;
+        }
+        r.close();
+    } catch( lemur::api::Exception& e ) {
+        LEMUR_ABORT(e);
+    } catch( ... ) {
+        std::cout << "Caught unhandled exception" << std::endl;
+        exit(1);
+    }
+    return true;
+
+
+    #if VERBOSE
+	printQueryContainer(mQuery);
+    #endif
+
+}
+
+
 bool QueryExpand::readQuery(map<int, map<string, int> > &mQuery,
 	indri::api::Parameters& params, set<int> &qIDs)
 {
@@ -216,13 +248,13 @@ bool QueryExpand::readQuery(map<int, map<string, int> > &mQuery,
             //cout << splitted_query.size() << endl;
             for (int i = 0; i != splitted_query.size(); ++i){
                 //cout << splitted_query[i] << endl;
-                string stemmed_term=stem(splitted_query[i]);
+                //string stemmed_term=stem(splitted_query[i]);
                 //cout <<stemmed_term<<endl;
-                if( (mTermIter = mTerm.find(stemmed_term)) != mTerm.end() )
+                if( (mTermIter = mTerm.find(splitted_query[i])) != mTerm.end() )
                 {
     				mTermIter->second += 1;
                 } else{
-    				mTerm.insert(map<string, int>::value_type(stemmed_term, 1));
+    				mTerm.insert(map<string, int>::value_type(splitted_query[i], 1));
                 }
             }
 
@@ -887,6 +919,11 @@ void QueryExpand::expand( int M=20, int R=29, int L=1000, int K=20, float beta=1
 	*/ 
 	map<int, map<string, int> > mmQuery;
 
+    /*
+    stemmed query terms
+    */ 
+	map<int, map<string, int> > sQuery;
+
 	/*
 	QIDS: all query IDs.
 	*/
@@ -927,11 +964,17 @@ void QueryExpand::expand( int M=20, int R=29, int L=1000, int K=20, float beta=1
 		exit(1);		
 	}
 
+    if (!stemQuery(mmQuery, sQuery, vIndex[0]))
+	{
+		cout << "Error when stem query:"  << endl;
+		exit(1);
+	}
 	if(!readResultsFile(M, QIDs, vIndex, mQueryDoc))
 	{
 		cout << "Error when read results file:" << resultFile << endl;
 		exit(1);	
 	}
+
 
     //debug purpose: print queries:
     //map<int, map<string, int> >::iterator it1;
@@ -948,10 +991,12 @@ void QueryExpand::expand( int M=20, int R=29, int L=1000, int K=20, float beta=1
 	// Randomly select R*M documents from indexes and append to mQueryDoc.
 	randomSelDoc( vIndex, R*M, mQueryDoc );
 
-	extractTerms(mQueryDoc, vIndex, mmQuery, L, K, beta, mmTermScore);
+	//extractTerms(mQueryDoc, vIndex, mmQuery, L, K, beta, mmTermScore);
+	extractTerms(mQueryDoc, vIndex, sQuery, L, K, beta, mmTermScore);
 
     //ofstream outFile(desFile.c_str()); 
-    writeQuery( mmQuery, mmTermScore, params, desFile );
+    //writeQuery( mmQuery, mmTermScore, params, desFile );
+    writeQuery( sQuery, mmTermScore, params, desFile );
 	//outFile.close();
 }
 
