@@ -11,3 +11,8 @@ use ```make``` to compile the binary.
 You need the ```indri``` library to compile the binary.
 
 Please refer to the sample files folder for the sample inputs of the binary.
+
+
+**NOTE:**
+
+The query ids can only be digits (e.g. 123), otherwise the results would be strange (all queries have the same <text> field)
