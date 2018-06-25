@@ -1,8 +1,8 @@
-#include < stdio.h > 
-#include < iostream > 
-#include < fstream > 
-#include < stdlib.h >
 #include "file.h"
+#include <stdio.h> 
+#include <iostream> 
+#include <fstream> 
+#include <stdlib.h>
 
   bool File::read(string & fileContent) {
     //open the file

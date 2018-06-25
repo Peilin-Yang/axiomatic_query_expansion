@@ -1,10 +1,10 @@
-#include < string > 
-#include < sstream > 
-#include < iostream > 
-#include < map > 
-#include < set > 
-#include < vector > 
-#include < math.h >
+#include <string> 
+#include <sstream> 
+#include <iostream> 
+#include <map> 
+#include <set> 
+#include <vector> 
+#include <math.h>
 
 #include "indri/IndexEnvironment.hpp"
 #include "indri/Index.hpp"
@@ -48,17 +48,17 @@ string QueryExpand::stem(const string & srcStr) {
   char * tmpTerm = (char * ) malloc(term.size() + 1);
   strcpy(tmpTerm, term.c_str());
   tmpTerm[term.size()] = '\0';
-  int ret = stemmer - > porter_stem(tmpTerm, 0, strlen(tmpTerm) - 1);
+  int ret = stemmer->porter_stem(tmpTerm, 0, strlen(tmpTerm) - 1);
   tmpTerm[ret + 1] = '\0';
-  term = tmpTerm;#
-  else
+  term = tmpTerm;
+  #else
   // krovetz stemmer
   // Use krovert stemmer if the index building uses krovetz stemmer
   //cout<<" k stem in use"<<endl;
     indri::parse::KrovetzStemmer * stemmer = new indri::parse::KrovetzStemmer();
   char * cstr = new char[srcStr.length() + 1];
   std::strcpy(cstr, srcStr.c_str());
-  char * tmpTerm = stemmer - > kstem_stemmer(cstr);
+  char * tmpTerm = stemmer->kstem_stemmer(cstr);
   term = tmpTerm;
   #endif
 
@@ -77,9 +77,9 @@ void QueryExpand::printIndexPaths(vector < string > & vIndex) {
 void QueryExpand::printQueryContainer(map < int, map < string, int > > & mmQuery) {
   cout << endl;
   for (map < int, map < string, int > > ::iterator it = mmQuery.begin(); it != mmQuery.end(); ++it) {
-    cout << "query number:" << it - > first << endl;
-    for (map < string, int > ::iterator i = it - > second.begin(); i != it - > second.end(); ++i) {
-      cout << i - > first << " " << i - > second << endl;
+    cout << "query number:" << it-> first << endl;
+    for (map < string, int > ::iterator i = it->second.begin(); i != it->second.end(); ++i) {
+      cout << i->first << " " << i->second << endl;
     }
     cout << "--------------------------" << endl;
   }
@@ -96,20 +96,20 @@ void QueryExpand::printQueryDoc(map < int, map < int, set < int > > > & mQueryDo
   map < int, map < int, set < int > > > ::iterator iter1;
   for (iter1 = mQueryDoc.begin(); iter1 != mQueryDoc.end(); ++iter1) {
     if (show_details) {
-      cout << iter1 - > first << endl;
+      cout << iter1->first << endl;
     }
     map < int, set < int > > ::iterator iter2;
     int size = 0;
-    for (iter2 = iter1 - > second.begin(); iter2 != iter1 - > second.end(); ++iter2) {
+    for (iter2 = iter1->second.begin(); iter2 != iter1->second.end(); ++iter2) {
       set < int > ::iterator iter3;
-      for (iter3 = iter2 - > second.begin(); iter3 != iter2 - > second.end(); ++iter3) {
+      for (iter3 = iter2->second.begin(); iter3 != iter2->second.end(); ++iter3) {
         if (show_details) {
-          cout << iter1 - > first << " " << iter2 - > first << " " << * iter3 << endl;
+          cout << iter1->first << " " << iter2->first << " " << *iter3 << endl;
         }
         size++;
       }
     }
-    cout << iter1 - > first << " size:" << size << endl;
+    cout << iter1->first << " size:" << size << endl;
   }
   cout << endl;
 }
@@ -117,8 +117,8 @@ void QueryExpand::printQueryDoc(map < int, map < int, set < int > > > & mQueryDo
 void QueryExpand::printTermsContainer(map < string, set < string > > sTerm) {
   cout << endl;
   for (map < string, set < string > > ::iterator it = sTerm.begin(); it != sTerm.end(); ++it) {
-    cout << "term:" << it - > first << endl;
-    for (set < string > ::iterator i = it - > second.begin(); i != it - > second.end(); ++i) {
+    cout << "term:" << it->first << endl;
+    for (set < string > ::iterator i = it->second.begin(); i != it->second.end(); ++i) {
       cout << * i << endl;
     }
     cout << "--------------------------" << endl;
@@ -155,10 +155,10 @@ bool QueryExpand::stemQuery(map < int, map < string, int > > & mQuery,
     map < string, int > ::iterator it2;
     for (it1 = mQuery.begin(); it1 != mQuery.end(); ++it1) {
       map < string, int > temp;
-      for (it2 = it1 - > second.begin(); it2 != it1 - > second.end(); ++it2) {
-        temp[r.processTerm(it2 - > first)] = it2 - > second;
+      for (it2 = it1->second.begin(); it2 != it1->second.end(); ++it2) {
+        temp[r.processTerm(it2->first)] = it2->second;
       }
-      sQuery[it1 - > first] = temp;
+      sQuery[it1->first] = temp;
     }
     r.close();
   } catch (lemur::api::Exception & e) {
@@ -224,7 +224,7 @@ bool QueryExpand::readQuery(map < int, map < string, int > > & mQuery,
         //string stemmed_term=stem(splitted_query[i]);
         //cout <<stemmed_term<<endl;
         if ((mTermIter = mTerm.find(splitted_query[i])) != mTerm.end()) {
-          mTermIter - > second += 1;
+          mTermIter->second += 1;
         } else {
           mTerm.insert(map < string, int > ::value_type(splitted_query[i], 1));
         }
@@ -290,8 +290,8 @@ bool QueryExpand::readResultsFile(int M, set < int > & QIDs, vector < string > &
       continue;
     }
 
-    if ((tmpIter = mTmpQueryDoc.find(queryID)) != mTmpQueryDoc.end() && tmpIter - > second.size() < M) {
-      tmpIter - > second.insert(one_row[2]);
+    if ((tmpIter = mTmpQueryDoc.find(queryID)) != mTmpQueryDoc.end() && tmpIter->second.size() < M) {
+      tmpIter->second.insert(one_row[2]);
     } else {
       set < string > sDoc;
       sDoc.insert(one_row[2]);
@@ -315,7 +315,7 @@ bool QueryExpand::readResultsFile(int M, set < int > & QIDs, vector < string > &
   map < int, set < string > > ::iterator mTmpIter;
   set < string > ::iterator sDocIter;
   for (mTmpIter = mTmpQueryDoc.begin(); mTmpIter != mTmpQueryDoc.end(); ++mTmpIter) {
-    for (sDocIter = mTmpIter - > second.begin(); sDocIter != mTmpIter - > second.end(); ++sDocIter) {
+    for (sDocIter = mTmpIter->second.begin(); sDocIter != mTmpIter->second.end(); ++sDocIter) {
       mDocIndexDocId.insert(map < string, pair < int, int > > ::value_type( * sDocIter, make_pair < int, int > (-1, -1)));
     }
   }
@@ -326,26 +326,26 @@ bool QueryExpand::readResultsFile(int M, set < int > & QIDs, vector < string > &
   for (int indexId = 0; indexId < vIndex.size(); ++indexId) {
     //cout << vIndex[indexId] << endl;
     indri::collection::Repository * repository = new indri::collection::Repository();
-    repository - > openRead(vIndex[indexId]);
-    indri::index::Index * index = ( * (repository - > indexes()))[0];
-    indri::collection::CompressedCollection * collection = repository - > collection();
+    repository->openRead(vIndex[indexId]);
+    indri::index::Index *index = (*(repository->indexes()))[0];
+    indri::collection::CompressedCollection * collection = repository->collection();
     //cout << index->documentCount() << endl;
-    int docCount = index - > documentCount();
+    int docCount = index->documentCount();
 
     //get the docno according to docId
     string docno;
     for (int i = 1; i <= docCount; ++i) {
-      docno = collection - > retrieveMetadatum(i, "docno");
+      docno = collection->retrieveMetadatum(i, "docno");
       if ((mDocIndexIter = mDocIndexDocId.find(docno)) != mDocIndexDocId.end()) //find the docId in current index
       {
-        mDocIndexIter - > second.first = indexId;
-        mDocIndexIter - > second.second = i;
+        mDocIndexIter->second.first = indexId;
+        mDocIndexIter->second.second = i;
         //cout << indexId << " docId:" << i << " docno:" << docno << endl;
       }
     }
 
-    collection - > close();
-    repository - > close();
+    collection->close();
+    repository->close();
     delete repository;
   }
 
@@ -353,17 +353,17 @@ bool QueryExpand::readResultsFile(int M, set < int > & QIDs, vector < string > &
     map < int, set < int > > mDocInfo;
     set < int > sTmpDoc;
     map < int, set < int > > ::iterator mDocInfoIter;
-    int queryId = mTmpIter - > first, docId, indexId;
-    for (sDocIter = mTmpIter - > second.begin(); sDocIter != mTmpIter - > second.end(); ++sDocIter) {
+    int queryId = mTmpIter->first, docId, indexId;
+    for (sDocIter = mTmpIter->second.begin(); sDocIter != mTmpIter->second.end(); ++sDocIter) {
       if ((mDocIndexIter = mDocIndexDocId.find( * sDocIter)) != mDocIndexDocId.end()) {
-        indexId = mDocIndexIter - > second.first;
-        docId = mDocIndexIter - > second.second;
+        indexId = mDocIndexIter->second.first;
+        docId = mDocIndexIter->second.second;
         if ((mDocInfoIter = mDocInfo.find(indexId)) == mDocInfo.end()) {
           sTmpDoc.clear();
           sTmpDoc.insert(docId);
           mDocInfo.insert(map < int, set < int > > ::value_type(indexId, sTmpDoc));
         } else {
-          mDocInfoIter - > second.insert(docId);
+          mDocInfoIter->second.insert(docId);
         }
       }
     }
@@ -392,18 +392,18 @@ void QueryExpand::randomSelDoc(vector < string > & vIndex, int rm,
   set < int > ::iterator docIter;
   int size = vIndex.size();
   for (int indexId = 0; indexId < size; ++indexId) {
-    indri::collection::Repository * repository = new indri::collection::Repository();
-    repository - > openRead(vIndex[indexId]);
-    indri::index::Index * index = ( * (repository - > indexes()))[0];
-    int docCount = index - > documentCount();
+    indri::collection::Repository *repository = new indri::collection::Repository();
+    repository->openRead(vIndex[indexId]);
+    indri::index::Index *index = (*(repository->indexes()))[0];
+    int docCount = index->documentCount();
 
     for (mQueryIter = mQueryDoc.begin(); mQueryIter != mQueryDoc.end(); ++mQueryIter) {
       sTmpDoc.clear();
       //cout << mQueryIter->first << " ";
       // accmulate the numbers of existed documents (for query expansion) of each query ID 
       int currentSize = 0;
-      for (mIndexIter = mQueryIter - > second.begin(); mIndexIter != mQueryIter - > second.end(); ++mIndexIter) {
-        currentSize += mIndexIter - > second.size();
+      for (mIndexIter = mQueryIter->second.begin(); mIndexIter != mQueryIter->second.end(); ++mIndexIter) {
+        currentSize += mIndexIter->second.size();
       }
 
       int desSize = currentSize + rmEach;
@@ -413,21 +413,21 @@ void QueryExpand::randomSelDoc(vector < string > & vIndex, int rm,
       while (currentSize < desSize) {
         int selDoc = rand() % docCount + 1;
 
-        if ((mIndexIter = mQueryIter - > second.find(indexId)) != mQueryIter - > second.end()) {
-          if (mIndexIter - > second.find(selDoc) == mIndexIter - > second.end()) {
-            mIndexIter - > second.insert(selDoc);
+        if ((mIndexIter = mQueryIter->second.find(indexId)) != mQueryIter->second.end()) {
+          if (mIndexIter->second.find(selDoc) == mIndexIter->second.end()) {
+            mIndexIter->second.insert(selDoc);
             currentSize++;
           }
         } else {
           set < int > sTmp;
           sTmp.insert(selDoc);
-          mQueryIter - > second.insert(map < int, set < int > > ::value_type(indexId, sTmp));
+          mQueryIter->second.insert(map < int, set < int > > ::value_type(indexId, sTmp));
           currentSize++;
         }
       }
     }
 
-    repository - > close();
+    repository->close();
   }
 
   //test output
@@ -442,15 +442,15 @@ void QueryExpand::extractAllTerms(map < int, set < int > > & mDoc,
   set < int > ::iterator sDocIter;
   for (mDocIter = mDoc.begin(); mDocIter != mDoc.end(); ++mDocIter) //browse each index
   {
-    int indexId = mDocIter - > first;
-    indri::collection::Repository * repository = new indri::collection::Repository();
-    repository - > openRead(vIndex[indexId]);
+    int indexId = mDocIter->first;
+    indri::collection::Repository *repository = new indri::collection::Repository();
+    repository->openRead(vIndex[indexId]);
     indri::server::LocalQueryServer local( * repository);
-    indri::index::Index * index = ( * (repository - > indexes()))[0];
+    indri::index::Index *index = (*(repository->indexes()))[0];
     vector < int > vDoc;
 
     vDoc.reserve(1000);
-    for (sDocIter = mDocIter - > second.begin(); sDocIter != mDocIter - > second.end(); ++sDocIter) {
+    for (sDocIter = mDocIter->second.begin(); sDocIter != mDocIter->second.end(); ++sDocIter) {
       vDoc.push_back( * sDocIter);
     }
     indri::server::QueryServerVectorsResponse * response = local.documentVectors(vDoc);
@@ -461,15 +461,15 @@ void QueryExpand::extractAllTerms(map < int, set < int > > & mDoc,
     stringstream indexDoc;
     set < string > sTmp;
 
-    for (sDocIter = mDocIter - > second.begin(); sDocIter != mDocIter - > second.end(); ++sDocIter)
+    for (sDocIter = mDocIter->second.begin(); sDocIter != mDocIter->second.end(); ++sDocIter)
     //browse each doc
     {
       ++docNum;
-      if (response - > getResults().size()) {
-        indri::api::DocumentVector * docVector = response - > getResults()[docNum];
-        int termSize = docVector - > positions().size();
+      if (response->getResults().size()) {
+        indri::api::DocumentVector *docVector = response->getResults()[docNum];
+        int termSize = docVector->positions().size();
         for (size_t i = 0; i < termSize; i++) {
-          string term = docVector - > stems()[docVector - > positions()[i]];
+          string term = docVector->stems()[docVector->positions()[i]];
           bool del = false;
           int size = term.size();
           for (int i = 0; i < size; ++i) {
@@ -488,7 +488,7 @@ void QueryExpand::extractAllTerms(map < int, set < int > > & mDoc,
 
           if ((mTermIter = mTerm.find(term)) != mTerm.end()) //existing term
           {
-            mTermIter - > second.insert(indexDoc.str());
+            mTermIter->second.insert(indexDoc.str());
           } else {
             sTmp.clear();
             sTmp.insert(indexDoc.str());
@@ -500,7 +500,7 @@ void QueryExpand::extractAllTerms(map < int, set < int > > & mDoc,
       }
     }
     delete response;
-    repository - > close();
+    repository->close();
     delete repository;
   }
 
@@ -579,7 +579,7 @@ void QueryExpand::calcuTermScore(map < string, int > & mQueryTerm,
   map < string, set < string > > ::iterator mTermIter;
   set < string > ::iterator sDocIter;
   for (mTermIter = mSetTerm.begin(); mTermIter != mSetTerm.end(); ++mTermIter) {
-    for (sDocIter = mTermIter - > second.begin(); sDocIter != mTermIter - > second.end(); ++sDocIter) {
+    for (sDocIter = mTermIter->second.begin(); sDocIter != mTermIter->second.end(); ++sDocIter) {
       sDoc.insert( * sDocIter);
     }
   }
@@ -588,20 +588,20 @@ void QueryExpand::calcuTermScore(map < string, int > & mQueryTerm,
   map < string, int > ::iterator mQueryIter;
   for (mQueryIter = mQueryTerm.begin(); mQueryIter != mQueryTerm.end(); ++mQueryIter) //browse each query term
   {
-    string queryTerm = mQueryIter - > first;
-    int qtf = mQueryIter - > second; // query term frequency
+    string queryTerm = mQueryIter->first;
+    int qtf = mQueryIter->second; // query term frequency
     map < string, set < string > > ::iterator mSetTermIter, mQueryTermIter;
     if ((mQueryTermIter = mSetTerm.find(queryTerm)) != mSetTerm.end()) {
       multimap < float, string, greater < float > > mTermScore; //score-term
       for (mSetTermIter = mSetTerm.begin(); mSetTermIter != mSetTerm.end(); ++mSetTermIter) //browse each candidate term
       {
-        string setTerm = mSetTermIter - > first;
+        string setTerm = mSetTermIter->first;
         float score = 0.0;
         if (setTerm.compare(queryTerm) != 0) //don't consider the similarity of the query term itself
         {
           //cout << "queryTerm:" << queryTerm << " setTerm:" << setTerm << " ";
-          float betMi = calcuMI(mQueryTermIter - > second, mSetTermIter - > second, sDoc);
-          float selfMi = calcuMI(mQueryTermIter - > second, mQueryTermIter - > second, sDoc);
+          float betMi = calcuMI(mQueryTermIter->second, mSetTermIter->second, sDoc);
+          float selfMi = calcuMI(mQueryTermIter->second, mQueryTermIter->second, sDoc);
           //cout << mQueryTermIter->first << "-" << mSetTermIter->first << " betMi:" << betMi << " selfMi:" << selfMi << endl;
           score = beta * (float) qtf * betMi / selfMi;
 
@@ -621,7 +621,7 @@ void QueryExpand::calcuTermScore(map < string, int > & mQueryTerm,
       map < string, float > mSetTermScore;
       multimap < float, string, greater < float > > ::iterator mulIter;
       for (mulIter = mTermScore.begin(); mulIter != mTermScore.end() && mSetTermScore.size() < L; ++mulIter) {
-        mSetTermScore.insert(map < string, float > ::value_type(mulIter - > second, mulIter - > first));
+        mSetTermScore.insert(map < string, float > ::value_type(mulIter->second, mulIter->first));
       }
 
       mmScore.insert(map < string, map < string, float > > ::value_type(queryTerm, mSetTermScore));
@@ -653,7 +653,7 @@ void QueryExpand::calcuQueryScore(map < string, int > & mQueryTerm,
   int querySize = 0;
   map < string, int > ::iterator mQueryTermIter;
   for (mQueryTermIter = mQueryTerm.begin(); mQueryTermIter != mQueryTerm.end(); ++mQueryTermIter) {
-    querySize += mQueryTermIter - > second;
+    querySize += mQueryTermIter->second;
   }
 
   map < string, float > mTmpScore;
@@ -661,12 +661,12 @@ void QueryExpand::calcuQueryScore(map < string, int > & mQueryTerm,
   map < string, map < string, float > > ::iterator mmScoreIter;
   for (mmScoreIter = mmScore.begin(); mmScoreIter != mmScore.end(); ++mmScoreIter) {
     map < string, float > ::iterator mTermScoreIter;
-    for (mTermScoreIter = mmScoreIter - > second.begin(); mTermScoreIter != mmScoreIter - > second.end(); ++mTermScoreIter) {
-      string term = mTermScoreIter - > first;
-      float score = mTermScoreIter - > second;
+    for (mTermScoreIter = mmScoreIter->second.begin(); mTermScoreIter != mmScoreIter->second.end(); ++mTermScoreIter) {
+      string term = mTermScoreIter->first;
+      float score = mTermScoreIter->second;
       if ((mTmpScoreIter = mTmpScore.find(term)) != mTmpScore.end()) {
         //existing term
-        mTmpScoreIter - > second += score;
+        mTmpScoreIter->second += score;
       } else {
         //sum score
         mTmpScore.insert(map < string, float > ::value_type(term, score));
@@ -680,7 +680,7 @@ void QueryExpand::calcuQueryScore(map < string, int > & mQueryTerm,
   for (mTmpScoreIter = mTmpScore.begin(); mTmpScoreIter != mTmpScore.end(); ++mTmpScoreIter) //insert terms (can be the query term)
   {
     mulScore.insert(multimap < float, string, greater < float > > ::value_type(
-      mTmpScoreIter - > second / (float) querySize, mTmpScoreIter - > first)); //sumscore/|Q|
+      mTmpScoreIter->second / (float) querySize, mTmpScoreIter->first)); //sumscore/|Q|
   }
 
   //cout << "mulScore:" << mulScore.size() << endl; 
@@ -690,15 +690,15 @@ void QueryExpand::calcuQueryScore(map < string, int > & mQueryTerm,
     bool del = false;
 
     //delete the term if it contains non-letter pounction
-    int size = mulIter - > second.size();
+    int size = mulIter->second.size();
     for (int i = 0; i < size; ++i) {
-      if (!((mulIter - > second[i] >= 'a' && mulIter - > second[i] <= 'z') || (mulIter - > second[i] >= 'A' && mulIter - > second[i] <= 'Z'))) {
+      if (!((mulIter->second[i] >= 'a' && mulIter->second[i] <= 'z') || (mulIter->second[i] >= 'A' && mulIter->second[i] <= 'Z'))) {
         del = true;
       }
     }
 
     if (!del) {
-      mTermScore.insert(map < string, float > ::value_type(mulIter - > second, mulIter - > first));
+      mTermScore.insert(map < string, float > ::value_type(mulIter->second, mulIter->first));
     }
   }
 
@@ -727,18 +727,18 @@ void QueryExpand::extractTerms(map < int, map < int, set < int > > > & mQueryDoc
     */
     map < string, set < string > > sTerm;
 
-    extractAllTerms(mQueryIter - > second, vIndex, sTerm);
+    extractAllTerms(mQueryIter->second, vIndex, sTerm);
 
     #if VERBOSE
     cout << "query:" << mQueryIter - > first << " size:" << sTerm.size() << endl;
     #endif
     map < int, map < string, int > > ::iterator mmQueryIter;
-    if ((mmQueryIter = mmQuery.find(mQueryIter - > first)) != mmQuery.end()) {
+    if ((mmQueryIter = mmQuery.find(mQueryIter->first)) != mmQuery.end()) {
       map < string, map < string, float > > mTermScore;
-      calcuTermScore(mmQueryIter - > second, sTerm, L, beta, mTermScore);
+      calcuTermScore(mmQueryIter->second, sTerm, L, beta, mTermScore);
       map < string, float > mAddTerm;
-      calcuQueryScore(mmQueryIter - > second, mTermScore, K, mAddTerm);
-      mmTermScore.insert(map < int, map < string, float > > ::value_type(mQueryIter - > first, mAddTerm));
+      calcuQueryScore(mmQueryIter->second, mTermScore, K, mAddTerm);
+      mmTermScore.insert(map < int, map < string, float > > ::value_type(mQueryIter->first, mAddTerm));
     }
 
   }
@@ -759,8 +759,8 @@ void QueryExpand::writeQuery(map < int, map < string, int > > & mmQuery,
     map < int, map < string, float > > ::iterator mmTermScoreIter;
     if ((mmTermScoreIter = mmTermScore.find(queryId)) != mmTermScore.end()) {
       map < string, float > ::iterator mTermScoreIter;
-      for (mTermScoreIter = mmTermScoreIter - > second.begin(); mTermScoreIter != mmTermScoreIter - > second.end(); ++mTermScoreIter) {
-        query << mTermScoreIter - > second << " " << mTermScoreIter - > first << " ";
+      for (mTermScoreIter = mmTermScoreIter->second.begin(); mTermScoreIter != mmTermScoreIter->second.end(); ++mTermScoreIter) {
+        query << mTermScoreIter->second << " " << mTermScoreIter->first << " ";
       }
       //query << mTermScoreIter->second << " " << mTermScoreIter->first << " ";
     }
