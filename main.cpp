@@ -14,14 +14,9 @@
 #include "indri/LocalQueryServer.hpp"
 #include "indri/ScopedLock.hpp"
 #include "indri/QueryEnvironment.hpp"
-
 #include "indri/Parameters.hpp"
 
-#include "file.h"
-//#include "queryProcess.h"
-//#include "trainParam.h"
 #include "queryExpand.h"
-//#include "mqAnalyze.h"
 
 using namespace std;
 
