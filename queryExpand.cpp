@@ -740,7 +740,6 @@ void QueryExpand::extractTerms(map < int, map < int, set < int > > > & mQueryDoc
       calcuQueryScore(mmQueryIter->second, mTermScore, K, mAddTerm);
       mmTermScore.insert(map < int, map < string, float > > ::value_type(mQueryIter->first, mAddTerm));
     }
-
   }
 }
 

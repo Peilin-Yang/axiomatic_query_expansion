@@ -22,7 +22,7 @@ using namespace std;
 
 void usage() {
   cout << "***Usage:***\n"
-  << "trec_query_expansion "
+  << "axiom_query_expansion "
   << "-oqf=<original_query_file_path> "
   << "-output=<output_path_of_the_expanded_query_file> "
   << "-index_list=<index_list_file> "
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     int K = param.get( "K", 20 );
     float beta = param.get( "beta", 1.7 );
 
-    cout << "M:" << M << " R:" << R << " L:" << L << " K:" << K << " beta:" << beta << endl;
+    //cout << "M:" << M << " R:" << R << " L:" << L << " K:" << K << " beta:" << beta << endl;
 
     expand.expand( M, R, L, K, beta );
   } catch(lemur::api::Exception& e) {
